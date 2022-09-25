@@ -1,0 +1,41 @@
+---
+- hosts: all
+# when we install something we have to use become to run with root previlages
+  become: yes
+  tasks:
+  - name: Install openjdk8
+    package:
+      name: openjdk-8-jdk
+      state: present
+  # - name: Install tomcat8
+  #   package:
+  #     name: tomcat8
+  #     state: present
+  - name: Install tomcat8
+    get_url: 
+      url: https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.81/bin/apache-tomcat-8.5.81.tar.gz
+      dest: /home/ansible/
+  - name: Extract tomcat8
+    unarchive:
+      src: /home/ansible/apache-tomcat-8.5.81.tar.gz
+      dest: /home/ansible
+      remote_src: yes
+  # - name: Give permissions to tomcat8 directory 
+  #   file:
+  #     path: /var/lib/tomcat8
+  #     mode: '0777'
+  #     state: directory
+  #     recurse: yes
+
+  - name: Download jenkins to webapps
+    get_url: 
+      url: http://ftp-nyc.osuosl.org/pub/jenkins/war-stable/2.319.2/jenkins.war
+      dest: /home/ansible/apache-tomcat-8.5.81/webapps/jenkins.war
+  - name: Start the tomcat service 
+    command: sh /home/ansible/apache-tomcat-8.5.81/bin/startup.sh 
+  # - name: Enable and start tomcat
+  #   service:
+  #     name: tomcat8
+  #     state: started
+  #     enabled: yes
+
